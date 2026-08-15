@@ -1,13 +1,35 @@
 require("dotenv").config();
-const mongoose = require("mongoose");
-const dns = require("dns");
 
-dns.resolveSrv("_mongodb._tcp.cluster0.b0aymjy.mongodb.net", (err, addresses) => {
-  console.log("DNS Error:", err);
-  console.log("DNS Addresses:", addresses);
+const dns = require("dns");
+dns.setServers(["8.8.8.8"]);
+
+const express = require("express");
+const mongoose = require("mongoose");
+
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+
+const app = express();
+
+app.use(express.json());
+
+app.use("/api/auth", authRoutes);
+
+app.get("/api/health", (req, res) => {
+    res.json({
+        success: true,
+        message: "KnowXchange backend is running"
+    });
 });
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected!"))
-  .catch((err) => console.error("MongoDB Error:", err));
+const PORT = process.env.PORT || 5000;
+
+connectDB()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+        });
+    })
+    .catch((err) => {
+        console.error("Server startup failed:", err.message);
+    });
