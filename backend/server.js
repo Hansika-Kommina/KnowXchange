@@ -5,10 +5,13 @@ dns.setServers(["8.8.8.8"]);
 
 const express = require("express");
 const mongoose = require("mongoose");
+const skillsRoutes = require("./routes/skillsRoutes");
 
 const app = express();
 
 app.use(express.json());
+
+app.use("/api/skills", skillsRoutes);
 
 app.get("/api/health", (req, res) => {
     res.json({
