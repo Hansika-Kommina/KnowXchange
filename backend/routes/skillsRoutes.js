@@ -1,3 +1,4 @@
+const authMiddleware = require("../middleware/authMiddleware");
 const express = require("express");
 
 const {
@@ -7,7 +8,7 @@ const {
 
 const router = express.Router();
 
-router.post("/", createSkill);
+router.post("/", authMiddleware, createSkill);
 
 router.get("/", getSkills);
 
