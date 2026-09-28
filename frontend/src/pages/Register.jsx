@@ -6,7 +6,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (name.trim() === "") {
@@ -34,13 +34,36 @@ function Register() {
       return;
     }
 
-    console.log({
-      name,
-      email,
-      password
-    });
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password
+          })
+        }
+      );
 
-    alert("Registration form is valid!");
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Registration failed");
+        return;
+      }
+
+      alert("Registration successful!");
+      console.log(data);
+
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("Unable to connect to the server");
+    }
   };
 
   return (
