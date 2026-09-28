@@ -6,10 +6,11 @@ dns.setServers(["8.8.8.8"]);
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 const skillsRoutes = require("./routes/skillsRoutes");
 const authRoutes = require("./routes/authRoutes");
-const cookieParser = require("cookie-parser");
+const requestRoutes = require("./routes/requestRoutes");
 
 const app = express();
 
@@ -21,8 +22,10 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+app.use("/api/requests", requestRoutes);
 app.use("/api/skills", skillsRoutes);
 app.use("/api/auth", authRoutes);
+
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/api/health", (req, res) => {
