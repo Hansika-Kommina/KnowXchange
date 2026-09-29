@@ -4,7 +4,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (email.trim() === "") {
@@ -17,12 +17,36 @@ function Login() {
       return;
     }
 
-    console.log({
-      email,
-      password
-    });
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
 
-    alert("Login form is valid!");
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Login failed");
+        return;
+      }
+
+      alert("Login successful!");
+      console.log(data);
+
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Unable to connect to the server");
+    }
   };
 
   return (
